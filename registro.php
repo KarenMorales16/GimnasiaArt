@@ -3,8 +3,8 @@
 require_once "config.php";
  
 // Define variables and initialize with empty values
-$tipo =$nombre = $apaterno = $amaterno = $fecha_nac = $peso_kg = $estatura_cm = $ciudad = $asociacion = $clave = $rep_clave = "";
-$nombre_err = $apaterno_err = $amaterno_err = $fecha_nac_err = $peso_kg_err = $estatura_cm_err = $clave_err = $rep_clave_err = "";
+$username=$tipo =$nombre = $apaterno = $amaterno = $fecha_nac = $peso_kg = $estatura_cm = $ciudad = $asociacion = $clave = $rep_clave = "";
+$username_err = $nombre_err = $apaterno_err = $amaterno_err = $fecha_nac_err = $peso_kg_err = $estatura_cm_err = $clave_err = $rep_clave_err = "";
 
 
 
@@ -64,6 +64,47 @@ if($_SERVER["REQUEST_METHOD"] === "POST"){
         // Close statement
         mysqli_stmt_close($stmt);
     }
+
+
+    if(empty($_POST['username'])){
+        $username_err = "Por favor ingrese un username.";
+    } else{
+        // Prepare a select statement
+        $sql = "SELECT ID_Usuario FROM USUARIO WHERE username = ?";
+        
+        if($stmt = mysqli_prepare($link, $sql)){
+           
+            // Bind variables to the prepared statement as parameters
+            mysqli_stmt_bind_param($stmt, "s", $param_username);
+            
+            // Set parameters
+            $param_username = trim($_POST["username"]);
+            
+            // Attempt to execute the prepared statement
+            if(mysqli_stmt_execute($stmt)){
+                /* store result */
+                mysqli_stmt_store_result($stmt);
+
+                if(mysqli_stmt_num_rows($stmt) >= 1){
+                    $username_err = "Este nombre de usuario ya está en uso.";
+                    } else{
+                 if(strlen(trim($_POST["username"])) < 11){
+                    $username = trim($_POST["username"]);
+                 }
+                 else{
+                    $username_err = "El username debe tener máximo 10 caracteres.";
+                 }
+                    }  
+            } else{
+                echo "Ups! Algo salió mal. Por favor, inténtelo de nuevo más tarde.";
+            }
+        }
+         
+        // Close statement
+        mysqli_stmt_close($stmt);
+    }
+
+
 
     // Validate apaterno
     if(empty($_POST["apaterno"])){
@@ -215,43 +256,31 @@ if($_SERVER["REQUEST_METHOD"] === "POST"){
         mysqli_stmt_close($stmt);
     }
     
-    // Validate password
-    if(empty(trim($_POST["clave"]))){
-        $clave_err = "Por favor ingresa una contraseña.";     
-    } elseif(strlen(trim($_POST["clave"])) > 6){
-        $clave_err = "La contraseña al menos debe tener 6 caracteres.";
-    } else{
-        $clave = trim($_POST["clave"]);
-    }
-    
-    // Validate confirm password
-    if(empty(trim($_POST["rep_clave"]))){
-        $rep_clave_err = "Confirma tu contraseña.";     
-    } else{
-        $rep_clave = trim($_POST["rep_clave"]);
-        if(empty($clave_err) && ($clave != $rep_clave)){
-            $confirm_password_err = "No coincide la contraseña.";
+        // Validate password
+        if(empty(trim($_POST["clave"]))){
+            $clave_err = "Por favor ingresa una contraseña.";     
+        } elseif(strlen(trim($_POST["clave"])) < 6){
+            $clave_err = "La contraseña al menos debe tener 6 caracteres.";
+        } else{
+            $clave = trim($_POST["clave"]);
         }
+        
+        // Validate confirm password
+        if(empty(trim($_POST["rep_clave"]))){
+            $rep_clave_err = "Confirma tu contraseña.";     
+        } else{
+            $rep_clave = trim($_POST["rep_clave"]);
+            if(empty($clave_err) && ($clave != $rep_clave)){
+                $rep_clave_err = "No coincide la contraseña.";
+                
+            }
+
     }
     
     // Check input errors before inserting in database
-    if(empty($nombre_err) && empty($apaterno_err) && empty($amaterno_err) && empty($fecha_nac_err) && empty($peso_kg_err) && empty($estatura_cm_err) && empty($clave_err) && empty($rep_clave_err)){
-       
-        if (isset($_POST['Ingresar'])){
+    if(empty($nombre_err) && empty($apaterno_err) && empty($amaterno_err) && empty($fecha_nac_err) && empty($peso_kg_err) && empty($estatura_cm_err) && empty($clave_err) && empty($rep_clave_err) && empty($username_err)){
 
-            print_r($_POST);
-        }
-        
-
-
-
-
-// Prepare an insert statement
-//$stmt = $link->prepare( "INSERT INTO USUARIO (	ID_Usuario,Clave,Nombre,Username, ApellidoP, ApellidoM, FechaNacimiento, Peso, Estatura) VALUES (?, ?, ?, ? , ?,  ?, ?, ?, ?)");
-//$stmt->bind_param("sss",$peso_kg,  $param_clave ,$param_nombre, $param_nombre, $param_apaterno, $param_amaterno, $param_fechanac, $param_peso, $param_estatura);
-
-
-        $param_nombre = $nombre;
+         $param_nombre = $nombre;
          $param_apaterno = $apaterno;
          $param_amaterno = $amaterno;
          $param_fechanac = $fecha_nac;
@@ -261,7 +290,7 @@ if($_SERVER["REQUEST_METHOD"] === "POST"){
      try {
        // Prepare an insert statement
        $sql = "INSERT INTO USUARIO (Clave,Nombre,Username, ApellidoP, ApellidoM, FechaNacimiento, Peso, Estatura, Estatus, Clv_Nivel, Id_Ciudad,Id_Asociacion,id_TipoUsuario   ) 
-       VALUES ($clave ,'$param_nombre', '$param_nombre', '$param_apaterno', '$param_amaterno', '$param_fechanac', $peso_kg, $param_estatura, 1 , 1, '$ciudad', $asociacion,$tipo)";
+       VALUES ($clave ,'$param_nombre', '$username', '$param_apaterno', '$param_amaterno', '$param_fechanac', $peso_kg, $param_estatura, 1 , 1, '$ciudad', $asociacion,$tipo)";
         
        
       $result=  mysqli_query($link, $sql);
@@ -307,6 +336,14 @@ if($_SERVER["REQUEST_METHOD"] === "POST"){
                 </div>
                 <input type="text" name="nombre" class="form-control input_user" value="<?php echo $nombre; ?>" placeholder="nombre">
                 <span class="help-block"><?php echo $nombre_err; ?></span>
+            </div>
+
+            <div class="input-group mb-2 form-group <?php echo (!empty($username_err)) ? 'has-error' : ''; ?>">
+                <div class="input-group-append">
+                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                </div>
+                <input type="text" name="username" class="form-control input_user" value="<?php echo $username; ?>" placeholder="username">
+                <span class="help-block"><?php echo $username_err; ?></span>
             </div>
 
             <div class="input-group mb-2 form-group <?php echo (!empty($apaterno_err)) ? 'has-error' : ''; ?>">
