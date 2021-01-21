@@ -125,7 +125,16 @@
         <p style="text-align: justify"> 
         Friedrich Ludwig Jahn (1778-1852) conocido como el <b>padre de la gimnasia <b>
         </p>
+        <?php  
+				
+        if(isset($_SESSION['username']))  
+        {  
+        ?>  
         <h5><a href="Form3U1.php"> Tomar  prueba 3 : Pioneros del movimiento de gimnasia</a></h5>  
+        <?php  
+        }  
+        ?>  
+    
         </div>
          <iframe width="760" height="415" src="https://www.youtube.com/embed/aAZHQo8oYWU" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>            
           </div>
@@ -233,3 +242,19 @@
 <!-- End Footer -->
 </body>
 </html>
+<?php
+session_start();  
+// Include config file
+require_once "config.php";
+
+if(isset($_POST["Status"]) & isset($_POST["userScore"])){
+$userScore= $_POST["userScore"]; 
+$status=$_POST["Status"]; 
+   
+    $query = " Insert into Evaluacion_Usuario (Id_Evaluacion, ID_Usuario, Id_Entrenador, Puntuacion, comentario, Estatus) values (3,".$_SESSION['id_usuario'].",".$_SESSION['Id_Entrenador'].", $userScore, 'Test',$status) ";
+
+    mysqli_query($link, $query);  
+    mysqli_close($link);
+
+}
+?>

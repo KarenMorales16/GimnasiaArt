@@ -33,7 +33,7 @@ let questions = [
       "Sexta  edición ",
       "Cuarta edición",
       "Primera edicion",
-      "Quinta edición "
+      "Quinta edición"
     ]
   },
     {
@@ -57,7 +57,7 @@ let questions = [
       "Sexta  edición ",
       "Cuarta edición",
       "Primera edicion",
-      "Quinta edición "
+      "Quinta edición"
     ]
   }
 

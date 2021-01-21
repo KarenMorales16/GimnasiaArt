@@ -1,7 +1,6 @@
 //selecting all required elements
 const start_btn = document.querySelector(".start_btn button");
 const info_box = document.querySelector(".info_box");
-//const exit_btn = info_box.querySelector(".buttons .btQuit");
 const continue_btn = info_box.querySelector(".buttons .restart");
 const quiz_box = document.querySelector(".quiz_box");
 const result_box = document.querySelector(".result_box");
@@ -15,11 +14,7 @@ start_btn.onclick = ()=>{
     info_box.classList.add("activeInfo"); //show info box
 }
 
-// if exitQuiz button clicked
-/*btQuit.onclick = ()=>{
-    window.location.href = window.location.href + "?w1=" + userScore + "&w2=" + status; //hide info box
-}
-*/
+
 
 // if continueQuiz button clicked
 continue_btn.onclick = ()=>{
@@ -40,34 +35,7 @@ let counter;
 let counterLine;
 let widthValue = 0;
 
-const restart_quiz = result_box.querySelector(".buttons .restart");
-//const quit_quiz = result_box.querySelector(".buttons .quit");
 
-// if restartQuiz button clicked
-restart_quiz.onclick = ()=>{
-    quiz_box.classList.add("activeQuiz"); //show quiz box
-    result_box.classList.remove("activeResult"); //hide result box
-    timeValue = 15; 
-    que_count = 0;
-    que_numb = 1;
-    userScore = 0;
-    status= 0 ;
-    widthValue = 0;
-    showQuetions(que_count); //calling showQestions function
-    queCounter(que_numb); //passing que_numb value to queCounter
-    clearInterval(counter); //clear counter
-    clearInterval(counterLine); //clear counterLine
-    startTimer(timeValue); //calling startTimer function
-    startTimerLine(widthValue); //calling startTimerLine function
-    timeText.textContent = "Time Left"; //change the text of timeText to Time Left
-    next_btn.classList.remove("show"); //hide the next button
-}
-
-// if quitQuiz button clicked
-/*quit_quiz.onclick = ()=>{
-    window.location.reload(); //reload the current window
-}
-*/
 
 const next_btn = document.querySelector("footer .next_btn");
 const bottom_ques_counter = document.querySelector("footer .total_que");
@@ -88,7 +56,9 @@ next_btn.onclick = ()=>{
     }else{
         clearInterval(counter); //clear counter
         clearInterval(counterLine); //clear counterLine
+       
         showResult(); //calling showResult function
+        
     }
 }
 
@@ -154,29 +124,36 @@ function showResult(){
     info_box.classList.remove("activeInfo"); //hide info box
     quiz_box.classList.remove("activeQuiz"); //hide quiz box
     result_box.classList.add("activeResult"); //show result box
+    
+    status=0;
+
     const scoreText = result_box.querySelector(".score_text");
-    if (userScore > 3){ // if user scored more than 3
+    if (userScore == 5){ // if user scored more than 3
         //creating a new span tag and passing the user score number and total question number
-        let scoreTag = '<span> Felicidades! 🎉, Tu tienes <p>'+ userScore +'</p> de <p>'+ questions.length +'</p></span>';
-        scoreText.innerHTML = scoreTag;  //adding new span tag inside score_Text
-        status = 1;
+        let scoreTag = '<form action="Unidad1.php" method="post">'+'<span> Felicidades! 🎉, Tu tienes <p>'+ userScore +'</p> de <p>'+ questions.length +'</p></span>';
+        +'<span> Repetir la prueba 😐, Tu solo tienes <p>'+ userScore +'</p> de <p>'+ questions.length +'</p></span>';
+        let form='<input type="hidden" id="res" name="userScore" value=' +(userScore*20) +'>'+
+        '<input type="hidden" id="res" name="Status" value=' +1+'>'+'<div> <br><br> <center><input style="color:#fff;background:#4CAF50;font-size:20px;" type="submit" value="Terminar Prueba"></input></center></div> </form>'
+
+        scoreText.innerHTML = scoreTag+form;
     }
-    else if(userScore > 1){ // if user scored more than 1
-        let scoreTag = '<span> Muy bien  😎, Tu tienes <p>'+ userScore +'</p> de <p>'+ questions.length +'</p></span>';
-        scoreText.innerHTML = scoreTag;
-        status = 1;
+    else if(userScore == 4){ // if user scored more than 1
+        let scoreTag = '<form action="Unidad1.php" method="post">'+'<span> Muy bien  😎, Tu tienes <p>'+ userScore +'</p> de <p>'+ questions.length +'</p></span>';
+        +'<span> Repetir la prueba 😐, Tu solo tienes <p>'+ userScore +'</p> de <p>'+ questions.length +'</p></span>';
+        let form='<input type="hidden" id="res" name="userScore" value=' +(userScore*20) +'>'+
+        '<input type="hidden" id="res" name="Status" value=' +1+'>'+'<div> <br><br> <center><input style="color:#fff;background:#4CAF50;font-size:20px;" type="submit" value="Terminar Prueba"></input></center></div> </form>'
+        scoreText.innerHTML = scoreTag+form;
     }
     else{ // if user scored less than 1
-        let scoreTag = '<span> Repetir la prueba 😐, Tu solo tienes <p>'+ userScore +'</p> de <p>'+ questions.length +'</p></span>';
-        scoreText.innerHTML = scoreTag;
-        status = 0;
+        let scoreTag = '<form action="form3U1.php" method="post">'
+        +'<span> Repetir la prueba 😐, Tu solo tienes <p>'+ userScore +'</p> de <p>'+ questions.length +'</p></span>';
+        let form='<input type="hidden" id="res" name="userScore" value=' +(userScore*20) +'>'+
+        '<input type="hidden" id="res" name="Status" value=' +0 +'>'+'<div> <br><br> <center><input style="color:#fff;background:#4CAF50;font-size:20px;" type="submit" value="Reintentar"></input></center></div> </form>'
+
+        scoreText.innerHTML = scoreTag+form;
+        
     }
-  
-  localStorage.setItem("userScore",userScore);
-  localStorage.setItem("status",status);
-    
-  
-  
+
 }
 
 function startTimer(time){

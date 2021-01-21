@@ -1,28 +1,4 @@
-<?php
-session_start();  
-// Include config file
-require_once "config.php";
 
-// comprobar si tenemos los parametros w1 y w2 en la URL
-if (isset($_GET["w1"]) && isset($_GET["w2"])) {
-   // asignar w1 y w2 a dos variables
-   $userScore = $_GET["w1"];
-   $status = $_GET["w2"];
-
-
-
-    $query = " insert into evaluacion_usuario values (4,".$_SESSION['id_usuario'].",".$_SESSION['Id_Entrenador'].", $userScore, 'Test',$status) ";
-      // mostrar $phpVar1 y $phpVar2
-     // echo "<p>Parameters: " . $query.   "</p>";
-
-    mysqli_query($link, $query);  
-    mysqli_close($link);
-
-} else {
-    echo "<p>No parameters</p>";
- }
-
-?>
 <!DOCTYPE html>
 <!-- Created By CodingNepal - www.codingnepalweb.com -->
 <!DOCTYPE html>
@@ -34,6 +10,7 @@ if (isset($_GET["w1"]) && isset($_GET["w2"])) {
     <link rel="stylesheet" href="styleForm.css">
     <!-- FontAweome CDN Link for Icons -->
     <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 </head>
 <body>
     <!-- start Quiz button -->
@@ -79,7 +56,7 @@ if (isset($_GET["w1"]) && isset($_GET["w2"])) {
             <div class="total_que">
                 <!-- Here I've inserted Question Count Number from JavaScript -->
             </div>
-            <button class="next_btn">Siguiente Pregunta</button>
+            <button class="next_btn" > Siguiente Pregunta</button>
         </footer>
     </div>
 
@@ -92,30 +69,30 @@ if (isset($_GET["w1"]) && isset($_GET["w2"])) {
         <div class="score_text">
             <!-- Here I've inserted Score Result from JavaScript -->
         </div>
-        <div class="buttons">
-            <button class="restart" id="restart">Repetior prueba</button>
-            <button class="btnw" id="btnw">Repetior prueba</button>
-                     <button  type="button" id="btQuit" class="btnQuit"  onclick="window.location.href='Unidad1.php'">Salir</button>
-        </div>
+    
+       
     </div>
 
-   <script src="js/Form1questions.js"></script>
+   <script src="js/Form3Questions.js"></script>
     <!-- Inside this JavaScript file I've coded all Quiz Codes -->
-     <script src="js/script.js">
-    
-     
+     <script src="js/Form3Script.js">
+
      </script> 
 
 </body>
 </html>
 
- 
-<script>  
-btnw.onclick = ()=>{
-//alert(localStorage.getItem("status"));
-//userScore= localStorage.getItem("userScore").toString();
-// status= localStorage.getItem("status").toString();
- window.location.href = window.location.href + "?w1=" + userScore + "&w2=" + status;
- 
+<?php
+session_start();  
+// Include config file
+require_once "config.php";
+
+if(isset($_POST["Status"]) & isset($_POST["userScore"])){
+$userScore= $_POST["userScore"]; 
+$status=$_POST["Status"]; 
+    $query = " Insert into Evaluacion_Usuario (Id_Evaluacion, ID_Usuario, Id_Entrenador, Puntuacion, comentario, Estatus) values (3,".$_SESSION['id_usuario'].",".$_SESSION['Id_Entrenador'].", $userScore, 'Test',$status) ";
+    mysqli_query($link, $query);  
+    mysqli_close($link);
+
 }
-</script>
+?>
